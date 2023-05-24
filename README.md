@@ -1,6 +1,8 @@
 # Weekly Planner
-A weekly planner is a tool that helps individuals organize and manage their tasks, appointments, and commitments on a weekly basis. It typically consists of a calendar layout that displays the days of the week, allowing users to plan and schedule their activities effectively. Also following and checking tasks acomplishment
-#Priorities
+A weekly planner is a tool that helps individuals organize and manage their tasks, appointments, and commitments on a weekly basis. It typically consists of a calendar layout that displays the days of the week, allowing users to plan and schedule their activities effectively. Also following and checking tasks acomplishment.
+
+# Priorities
+
 ## MUST HAVE
 - Calendar View: A visual representation of the days of the week, allowing users to see their schedule at a glance.
 - Task Management: User has The ability to create, manage, and track tasks for each day or throughout the week.
