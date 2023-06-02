@@ -1,0 +1,52 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model flyway_schema_history {
+  installed_rank Int      @id(map: "flyway_schema_history_pk")
+  version        String?  @db.VarChar(50)
+  description    String   @db.VarChar(200)
+  type           String   @db.VarChar(20)
+  script         String   @db.VarChar(1000)
+  checksum       Int?
+  installed_by   String   @db.VarChar(100)
+  installed_on   DateTime @default(now()) @db.Timestamp(6)
+  execution_time Int
+  success        Boolean
+
+  @@index([success], map: "flyway_schema_history_s_idx")
+}
+
+model planner {
+  id         Int       @id(map: "planner_pk") @default(autoincrement())
+  start_date DateTime? @db.Timestamp(6)
+  end_date   DateTime? @db.Timestamp(6)
+  user_id    Int?
+  user       user?     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "planner_user_user_id_fk")
+  task       task[]
+}
+
+model task {
+  id           Int       @id(map: "task_pk") @default(autoincrement())
+  title        String
+  description  String
+  due          DateTime? @db.Timestamp(6)
+  accomplished Boolean   @default(false)
+  is_habit     Boolean   @default(false)
+  planner_id   Int?
+  planner      planner?  @relation(fields: [planner_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "task_planner_planner_id_fk")
+}
+
+model user {
+  id          Int       @id(map: "user_pk") @default(autoincrement())
+  first_name  String
+  second_name String
+  password    String
+  active      Boolean   @default(true)
+  planner     planner[]
+}
