@@ -26,11 +26,9 @@ const openapiSpecification = swaggerJSDoc({
     apis: ["./routers/*.ts"],
 });
 
-app.get("/", (req: Request, res: Response) =>
-    res.send("Hello World")
-);
+app.use(json());
+app.use(urlencoded({ extended: true }));
 
-app.listen(port, () => console.log(`Application started on port: ${port}`));
 app.use("/user", userRouter);
 app.use("/planner", plannerRouter);
 app.use("/task", taskRouter);
@@ -38,5 +36,4 @@ app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(openapiSpecification));
 app.use("/swagger.json", (req: Request, res: Response) =>
     res.json(openapiSpecification).status(200)
 );
-app.use(json());
-app.use(urlencoded({ extended: true }));
+app.listen(port, () => console.log(`Application started on port: ${port}`));

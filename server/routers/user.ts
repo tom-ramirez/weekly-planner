@@ -1,5 +1,6 @@
 import {Router} from "express";
 import {check} from "express-validator";
+import { usersController } from "../controllers";
 import validate from "../utils/validation";
 
 /**
@@ -48,20 +49,13 @@ import validate from "../utils/validation";
  */
 const userRouter = Router();
 
-userRouter.route("/").get((req, res) => {
-    res.send("Hello user")
-});
-userRouter.route("/:userId").get((req, res) => {
-    res.send("Get Single user" + req.params.userId)
-});
+userRouter.route("/").get(usersController.getUsers);
+
+userRouter.route("/:userId").get(usersController.getUserById);
 userRouter.route("/").post(
     [
-        check("username")
-            .trim()
-            .isLength({min: 3})
-            .withMessage("the name must have minimum length of 3"),
         check("password")
-            .isLength({min: 8, max: 15})
+            .isLength({min: 8})
             .withMessage("your password should have min and max length between 8-15")
             .matches(/\d/)
             .withMessage("your password should have at least one number")
@@ -71,20 +65,37 @@ userRouter.route("/").post(
             .trim()
             .isLength({min: 4})
             .withMessage("the first name must have minimum length of 3"),
-        check("last_name")
+        check("second_name")
             .trim()
             .isLength({min: 3})
             .withMessage("the last name must have minimum length of 3")
         ,
-    ], validate, (req, res) => {
-        res.send("Post Single user" + req.params.userId)
-    });
+    ],
+    validate,
+    usersController.createUser);
 
-userRouter.route("/:userId").put((req, res) => {
-    res.send("Update user" + req.params.userId)
-});
-userRouter.route("/:userId").delete((req, res) => {
-    res.send("Delete user" + req.params.userId)
-});
+userRouter.route("/:userId").put(
+    [
+        check("password")
+            .isLength({min: 8})
+            .withMessage("your password should have min and max length between 8-15")
+            .matches(/\d/)
+            .withMessage("your password should have at least one number")
+            .matches(/[!@#$%^&*(),.?":{}|<>]/)
+            .withMessage("your password should have at least one special character"),
+        check("first_name")
+            .trim()
+            .isLength({min: 4})
+            .withMessage("the first name must have minimum length of 3"),
+        check("second_name")
+            .trim()
+            .isLength({min: 3})
+            .withMessage("the last name must have minimum length of 3")
+        ,
+    ],
+        validate,
+        usersController.updateUser);
+
+userRouter.route("/:userId").delete(usersController.deleteUserById);
 
 export {userRouter};
