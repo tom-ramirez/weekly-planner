@@ -1,61 +1,25 @@
 import { Router } from "express";
 import { check } from "express-validator";
-import { usersController } from "../controllers";
+import usersController from "../controllers/user";
 import validate from "../utils/validation";
 
-/**
- * @openapi
- * /Users:
- *   get:
- *     tags: [
- *        Users
- *     ]
- *     parameters:
- *       - name: offset
- *         in: query
- *         type: integer
- *         description: The number of items to skip before starting to collect the result set.
- *       - name: limit
- *         in: query
- *         type: integer
- *         description: The maximum numbers of items to return.
- *     responses:
- *       200:
- *         description: OK
- *         content:
- *             application/json:
- *                 examples:
- *                     jsonObject:
- *                         summary: An example JSON response
- *                         value: '[
- *                          { "id": 1, "firstName": "Sundar", "lastName": "Pichai", "displayImageUrl": https://thispersondoesnotexist.com/image, "email": sundar.pichai@google.com, "phone": "0800001066", "jobTitle": "CEO", "role": { "id": 1, "description": "Admin" } }, { "id": 2, "firstName": "Matt", "lastName": "Cutts", "displayImageUrl": https://thispersondoesnotexist.com/image, "email": matt.cutts@google.com, "phone": "0800001066", "jobTitle": "Software Dev", "role": { "id": 2, "description": "Sales Rep" } }]'
- *       204:
- *         description: No Content
- *         content:
- *             application/json:
- *                 examples:
- *                     jsonObject:
- *                         summary: An example JSON response
- *                         value: '{ "message": "No Content" }'
- *       401:
- *         description: Unauthorized
- *         content:
- *             application/json:
- *                 examples:
- *                     jsonObject:
- *                         summary: An example JSON response
- *                         value: '{ "message": "Unauthorized" }'
- *
- */
 const userRouter = Router();
+const controller = new usersController();
+userRouter.get("/", async (_req, res) => {
+  const response = await controller.getAllUsers();
+  return res.send(response);
+});
 
-userRouter.route("/").get(usersController.getUsers);
-userRouter.route("/:userId").get(usersController.getUserById);
+userRouter.route("/:userId").get(async (_req, res) => {
+  const response = await controller.getUserById(_req.params.userId);
+  return res.send(response);
+});
+
 userRouter.route("/").post(
   [
     check("password")
       .isLength({ min: 8 })
-      .withMessage("your password should have min and max length between 8-15")
+      .withMessage("your password should have min 8 characters")
       .matches(/\d/)
       .withMessage("your password should have at least one number")
       .matches(/[!@#$%^&*(),.?":{}|<>]/)
@@ -70,7 +34,10 @@ userRouter.route("/").post(
       .withMessage("the last name must have minimum length of 3"),
   ],
   validate,
-  usersController.createUser
+  async (_req, res) => {
+    const response = await controller.createUser(_req.body);
+    return res.send(response);
+  }
 );
 
 userRouter.route("/:userId").put(
@@ -92,8 +59,15 @@ userRouter.route("/:userId").put(
       .withMessage("the last name must have minimum length of 3"),
   ],
   validate,
-  usersController.updateUser
+  async (_req, res) => {
+    const response = await controller.updateUser(_req.body, _req.params.userId);
+    return res.send(response);
+  }
+  //controller.updateUser
 );
-userRouter.route("/:userId").delete(usersController.deleteUserById);
+userRouter.route("/:userId").delete(async (_req, res) => {
+  const response = await controller.deleteUserById(_req.params.userId);
+  return res.send(response);
+});
 
 export { userRouter };

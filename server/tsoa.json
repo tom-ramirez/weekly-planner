@@ -1,0 +1,13 @@
+{
+  "entryFile": "index.ts",
+  "noImplicitAdditionalProperties": "throw-on-extras",
+  "spec": {
+    "outputDirectory": "public",
+    "specVersion": 3
+  },
+  "routes": {
+    "controllerPathGlobs": [
+      "./controllers/*.ts"
+    ]
+  }
+}

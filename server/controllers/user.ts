@@ -1,77 +1,115 @@
 import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
+import { Body, Delete, Get, Path, Post, Put, Route, Tags } from "tsoa";
 
 const prisma = new PrismaClient();
 
-async function getUsers(req: Request, res: Response) {
-  const users = await prisma.user.findMany({
-    select: {
-      first_name: true,
-      second_name: true,
-      id: true,
-    },
-  });
-  return res.status(200).json(users);
-}
+type UserType = {
+  id?: number;
+  first_name: string;
+  second_name: string;
+  password?: string;
+  active?: boolean;
+};
 
-async function createUser(req: Request, res: Response) {
-  const { first_name, second_name, password } = req.body;
-  await prisma.user.create({
-    data: {
-      first_name,
-      second_name,
-      password,
-      active: true,
-    },
-  });
-  return res.sendStatus(201);
-}
+@Route("user")
+@Tags("User")
+export default class usersController {
+  @Get("/")
+  public async getAllUsers(): Promise<{
+    data: UserType[];
+  }> {
+    const users = await prisma.user.findMany({
+      select: {
+        first_name: true,
+        second_name: true,
+        id: true,
+      },
+    });
 
-async function updateUser(req: Request, res: Response) {
-  const { first_name, second_name, password, active } = req.body;
-  const { userId } = req.params;
-  await prisma.user.update({
-    where: {
-      id: parseInt(userId),
-    },
-    data: {
-      first_name,
-      second_name,
-      password,
-      active,
-    },
-  });
-  return res.status(204);
-}
+    return {
+      data: users,
+    };
+  }
+  @Get("{userId}")
+  public async getUserById(userId: string): Promise<{
+    data: UserType;
+  }> {
+    console.log("Hello there");
+    const user = await prisma.user.findUnique({
+      where: {
+        id: parseInt(userId),
+      },
+      select: {
+        first_name: true,
+        second_name: true,
+        id: true,
+        active: true,
+      },
+    });
 
-async function getUserById(req: Request, res: Response) {
-  const user = await prisma.user.findUnique({
-    where: {
-      id: parseInt(req.params.userId),
-    },
-    select: {
-      first_name: true,
-      second_name: true,
-      id: true,
-      active: true,
-    },
-  });
-  if (user) {
-    return res.status(200).json(user);
-  } else {
-    return res.sendStatus(404);
+    return {
+      data: user,
+    };
+  }
+
+  @Post()
+  public async createUser(@Body() request: UserType): Promise<{
+    data: UserType;
+  }> {
+    const { first_name, second_name, password } = request;
+    const user = await prisma.user.create({
+      data: {
+        first_name,
+        second_name,
+        password,
+        active: true,
+      },
+    });
+    return {
+      data: user,
+    };
+  }
+
+  @Put("{userId}")
+  public async updateUser(
+    @Body() request: UserType,
+    userId: string
+  ): Promise<{
+    data: UserType;
+  }> {
+    const { first_name, second_name, password, active } = request;
+    const user = await prisma.user.update({
+      where: {
+        id: parseInt(userId),
+      },
+      data: {
+        first_name,
+        second_name,
+        password,
+        active,
+      },
+    });
+    return {
+      data: user,
+    };
+  }
+
+  @Delete("{userId}")
+  public async deleteUserById(userId: string): Promise<{
+    data: UserType;
+  }> {
+    const user = await prisma.user.delete({
+      where: {
+        id: parseInt(userId),
+      },
+    });
+    return {
+      data: user,
+    };
   }
 }
-async function deleteUserById(req: Request, res: Response) {
-  const { userId } = req.params;
-  await prisma.user.delete({
-    where: {
-      id: parseInt(userId),
-    },
-  });
-  return res.sendStatus(204);
-}
-
+/*
 const usersController = {
   getUsers,
   createUser,
@@ -81,3 +119,5 @@ const usersController = {
 };
 
 export { usersController };
+
+  */
