@@ -1,12 +1,19 @@
 import { Router } from "express";
-import { tasksController } from "../controllers";
+import tasksController from "../controllers/task";
 import validate from "../utils/validation";
 import { check } from "express-validator";
 
 const taskRouter = Router();
+const controller = new tasksController();
 
-taskRouter.route("/").get(tasksController.getTasks);
-taskRouter.route("/:taskId").get(tasksController.getTaskById);
+taskRouter.route("/").get(async (_req, res) => {
+  const response = await controller.getTasks();
+  return res.send(response);
+});
+taskRouter.route("/:taskId").get(async (_req, res) => {
+  const response = await controller.getTaskById(_req.params.taskId);
+  return res.send(response);
+});
 taskRouter
   .route("/")
   .post(
@@ -19,7 +26,10 @@ taskRouter
       check("planner_id").exists().isNumeric(),
     ],
     validate,
-    tasksController.createTask
+    async (_req, res) => {
+      const response = await controller.createTask(_req.body);
+      return res.send(response);
+    }
   );
 taskRouter
   .route("/:taskId")
@@ -33,8 +43,17 @@ taskRouter
       check("planner_id").exists().isNumeric(),
     ],
     validate,
-    tasksController.updateTask
+    async (_req, res) => {
+      const response = await controller.updateTask(
+        _req.body,
+        _req.params.taskId
+      );
+      return res.send(response);
+    }
   );
-taskRouter.route("/:taskId").delete(tasksController.deleteTaskById);
+taskRouter.route("/:taskId").delete(async (_req, res) => {
+  const response = await controller.deleteTaskById(_req.params.taskId);
+  return res.send(response);
+});
 
 export { taskRouter };

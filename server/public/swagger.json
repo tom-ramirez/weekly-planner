@@ -30,6 +30,132 @@
 					"first_name"
 				],
 				"type": "object"
+			},
+			"PlannerType": {
+				"properties": {
+					"task": {
+						"items": {
+							"properties": {
+								"is_habit": {
+									"type": "boolean"
+								},
+								"accomplished": {
+									"type": "boolean"
+								},
+								"due": {
+									"type": "string",
+									"format": "date-time"
+								},
+								"description": {
+									"type": "string"
+								},
+								"title": {
+									"type": "string"
+								},
+								"id": {
+									"type": "number",
+									"format": "double"
+								}
+							},
+							"required": [
+								"is_habit",
+								"accomplished",
+								"due",
+								"description",
+								"title",
+								"id"
+							],
+							"type": "object"
+						},
+						"type": "array"
+					},
+					"user": {},
+					"user_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"end_date": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"start_date": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"end_date",
+					"start_date",
+					"id"
+				],
+				"type": "object"
+			},
+			"TaskType": {
+				"properties": {
+					"planner_id": {
+						"type": "number",
+						"format": "double"
+					},
+					"planner": {
+						"properties": {
+							"user_id": {
+								"type": "number",
+								"format": "double"
+							},
+							"end_date": {
+								"type": "string",
+								"format": "date-time"
+							},
+							"start_date": {
+								"type": "string",
+								"format": "date-time"
+							},
+							"id": {
+								"type": "number",
+								"format": "double"
+							}
+						},
+						"required": [
+							"user_id",
+							"end_date",
+							"start_date",
+							"id"
+						],
+						"type": "object"
+					},
+					"is_habit": {
+						"type": "boolean"
+					},
+					"accomplished": {
+						"type": "boolean"
+					},
+					"due": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"description": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"is_habit",
+					"accomplished",
+					"due",
+					"description",
+					"title"
+				],
+				"type": "object"
 			}
 		},
 		"securitySchemes": {}
@@ -230,6 +356,394 @@
 					{
 						"in": "path",
 						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/planner": {
+			"get": {
+				"operationId": "GetPlanners",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"data": {
+											"items": {
+												"$ref": "#/components/schemas/PlannerType"
+											},
+											"type": "array"
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"planner"
+				],
+				"security": [],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "CreatePlanner",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"data": {
+											"$ref": "#/components/schemas/PlannerType"
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"planner"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/PlannerType"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/planner/{plannerId}": {
+			"get": {
+				"operationId": "GetPlannerById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"data": {
+											"$ref": "#/components/schemas/PlannerType"
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"planner"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "plannerId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdatePlanner",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"data": {
+											"$ref": "#/components/schemas/PlannerType"
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"planner"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "plannerId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/PlannerType"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeletePlannerById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"data": {
+											"$ref": "#/components/schemas/PlannerType"
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"planner"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "plannerId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/task": {
+			"get": {
+				"operationId": "GetTasks",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"data": {
+											"items": {
+												"$ref": "#/components/schemas/TaskType"
+											},
+											"type": "array"
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"task"
+				],
+				"security": [],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "CreateTask",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"data": {
+											"$ref": "#/components/schemas/TaskType"
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"task"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/TaskType"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/task/{taskId}": {
+			"get": {
+				"operationId": "GetTaskById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"data": {
+											"$ref": "#/components/schemas/TaskType"
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"task"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "taskId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"put": {
+				"operationId": "UpdateTask",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"data": {
+											"$ref": "#/components/schemas/TaskType"
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"task"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "taskId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/TaskType"
+							}
+						}
+					}
+				}
+			},
+			"delete": {
+				"operationId": "DeleteTaskById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"data": {
+											"$ref": "#/components/schemas/TaskType"
+										}
+									},
+									"required": [
+										"data"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"task"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "taskId",
 						"required": true,
 						"schema": {
 							"type": "string"

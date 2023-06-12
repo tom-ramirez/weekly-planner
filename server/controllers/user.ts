@@ -109,15 +109,3 @@ export default class usersController {
     };
   }
 }
-/*
-const usersController = {
-  getUsers,
-  createUser,
-  updateUser,
-  getUserById,
-  deleteUserById,
-};
-
-export { usersController };
-
-  */

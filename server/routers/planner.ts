@@ -1,12 +1,20 @@
 import { Router } from "express";
-import { plannersController } from "../controllers";
+import plannerController from "../controllers/planner";
 import validate from "../utils/validation";
 import { check } from "express-validator";
 
 const plannerRouter = Router();
+const controller = new plannerController();
 
-plannerRouter.route("/").get(plannersController.getPlanners);
-plannerRouter.route("/:plannerId").get(plannersController.getPlannerById);
+plannerRouter.route("/").get(async (_req, res) => {
+  const response = await controller.getPlanners();
+  return res.send(response);
+});
+
+plannerRouter.route("/:plannerId").get(async (_req, res) => {
+  const response = await controller.getPlannerById(_req.params.plannerId);
+  return res.send(response);
+});
 plannerRouter
   .route("/")
   .post(
@@ -16,7 +24,10 @@ plannerRouter
       check("user_id").exists().isNumeric(),
     ],
     validate,
-    plannersController.createPlanner
+    async (_req, res) => {
+      const response = await controller.createPlanner(_req.body);
+      return res.send(response);
+    }
   );
 plannerRouter
   .route("/:plannerId")
@@ -27,8 +38,17 @@ plannerRouter
       check("user_id"),
     ],
     validate,
-    plannersController.updatePlanner
+    async (_req, res) => {
+      const response = await controller.updatePlanner(
+        _req.body,
+        _req.params.plannerId
+      );
+      return res.send(response);
+    }
   );
-plannerRouter.route("/:plannerId").delete(plannersController.deletePlannerById);
+plannerRouter.route("/:plannerId").delete(async (_req, res) => {
+  const response = await controller.deletePlannerById(_req.params.plannerId);
+  return res.send(response);
+});
 
 export { plannerRouter };
