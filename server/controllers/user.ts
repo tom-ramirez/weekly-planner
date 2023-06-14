@@ -1,13 +1,16 @@
 import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
 import { Body, Delete, Get, Path, Post, Put, Route, Tags } from "tsoa";
+const bcrypt = require("bcrypt");
 
 const prisma = new PrismaClient();
 
 type UserType = {
   id?: number;
   first_name: string;
-  second_name: string;
+  second_name?: string;
+  email: string;
+  last_name: string;
   password?: string;
   active?: boolean;
 };
@@ -23,6 +26,7 @@ export default class usersController {
       select: {
         first_name: true,
         second_name: true,
+
         id: true,
       },
     });
@@ -58,11 +62,13 @@ export default class usersController {
     data: UserType;
   }> {
     const { first_name, second_name, password } = request;
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const user = await prisma.user.create({
       data: {
         first_name,
         second_name,
-        password,
+        password: hashedPassword,
         active: true,
       },
     });
@@ -79,6 +85,8 @@ export default class usersController {
     data: UserType;
   }> {
     const { first_name, second_name, password, active } = request;
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const user = await prisma.user.update({
       where: {
         id: parseInt(userId),
@@ -86,7 +94,7 @@ export default class usersController {
       data: {
         first_name,
         second_name,
-        password,
+        password: hashedPassword,
         active,
       },
     });

@@ -1,6 +1,6 @@
 import express, { json, urlencoded, Request, Response } from "express";
 import swaggerJSDoc from "swagger-jsdoc";
-import { plannerRouter, taskRouter, userRouter } from "./routers";
+import { authRouter, plannerRouter, taskRouter, userRouter } from "./routers";
 import swaggerUI from "swagger-ui-express";
 import morgan from "morgan";
 
@@ -36,6 +36,7 @@ app.use(urlencoded({ extended: true }));
 app.use("/user", userRouter);
 app.use("/planner", plannerRouter);
 app.use("/task", taskRouter);
+app.use("/auth", authRouter);
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(openapiSpecification));
 app.use("/swagger.json", (req: Request, res: Response) =>
   res.json(openapiSpecification).status(200)

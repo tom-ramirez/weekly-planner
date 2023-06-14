@@ -156,6 +156,35 @@
 					"title"
 				],
 				"type": "object"
+			},
+			"JWTResponse": {
+				"properties": {
+					"error": {
+						"type": "string"
+					},
+					"refreshToken": {
+						"type": "string"
+					},
+					"accessToken": {
+						"type": "string"
+					}
+				},
+				"type": "object"
+			},
+			"LoginFormType": {
+				"properties": {
+					"password": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"password",
+					"email"
+				],
+				"type": "object"
 			}
 		},
 		"securitySchemes": {}
@@ -750,6 +779,38 @@
 						}
 					}
 				]
+			}
+		},
+		"/auth": {
+			"post": {
+				"operationId": "Authenticate",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/JWTResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/LoginFormType"
+							}
+						}
+					}
+				}
 			}
 		}
 	},
