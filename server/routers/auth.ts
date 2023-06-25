@@ -23,6 +23,9 @@ authRouter.route("/").post(
     return response.error ? res.sendStatus(401) : res.send(response);
   }
 );
+
+// authRouter.route("/refresh").get(controller.refresh());
+
 /*
 authRouter.route("/refresh").get(async (_req, res) => {
   const response = await controller.refresh(res.locals.user as number);

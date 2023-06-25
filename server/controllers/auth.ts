@@ -21,12 +21,11 @@ export default class authController {
   @Post()
   async authenticate(@Body() request: LoginFormType): Promise<JWTResponse> {
     const { email, password } = request;
-    const users = await prisma.user.findUnique({
+    const user = await prisma.user.findUnique({
       where: {
         email: email,
       },
     });
-    const user = users && users.length > 0 && users[0];
     if (user) {
       const passwordCorrect = await bcrypt.compare(password, user.password);
       if (passwordCorrect) {
@@ -42,6 +41,30 @@ export default class authController {
     }
     return { error: "Wrong username or password" };
   }
+
+  async refresh(req: Request, res: Response): Promise<JWTResponse> {
+    // @ts-ignore
+    const userId = res.locals.user as number;
+
+    var user = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (user) {
+      return {
+        accessToken: jwt.sign({ sub: user.id }, "accessJWTSecret", {
+          expiresIn: 1200,
+        }),
+        refreshToken: jwt.sign({ sub: user.id }, "refreshJWTSecret", {
+          expiresIn: 1209600,
+        }),
+      };
+    }
+    return { error: "Wrong username or password" };
+  }
+
   /*
   @Get("/refresh")
   async refresh(userId: number): Promise<JWTResponse> {

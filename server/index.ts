@@ -4,6 +4,8 @@ import { authRouter, plannerRouter, taskRouter, userRouter } from "./routers";
 import swaggerUI from "swagger-ui-express";
 import morgan from "morgan";
 
+const { verifyToken } = require("./middleware/authentication");
+
 const app = express();
 const port = 3000;
 
@@ -33,14 +35,7 @@ app.use(express.static("public"));
 app.use(json());
 app.use(urlencoded({ extended: true }));
 
-app.use("/user", userRouter);
-app.use("/planner", plannerRouter);
-app.use("/task", taskRouter);
-app.use("/auth", authRouter);
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(openapiSpecification));
-app.use("/swagger.json", (req: Request, res: Response) =>
-  res.json(openapiSpecification).status(200)
-);
 app.use(
   "/docs",
   swaggerUI.serve,
@@ -50,4 +45,16 @@ app.use(
     },
   })
 );
+app.use("/swagger.json", (req: Request, res: Response) =>
+  res.json(openapiSpecification).status(200)
+);
+
+app.use("/auth", authRouter);
+
+app.all("*", verifyToken);
+
+app.use("/user", userRouter);
+app.use("/planner", plannerRouter);
+app.use("/task", taskRouter);
+
 app.listen(port, () => console.log(`Application started on port: ${port}`));
